@@ -240,7 +240,9 @@ def test_refellips_against_wvase10():
     # A comparison to WVASE for a 3 nm SiO$_2$ and 90 nm
     # polymer film in water with 20% solvent using the
     # Maxwell-Garnett EMA method.
-    dname = pth / "WVASE_example_3nmSiO2_90nmPNIPAM_20EMA-MG_MultiWavelength.txt"
+    dname = (
+        pth / "WVASE_example_3nmSiO2_90nmPNIPAM_20EMA-MG_MultiWavelength.txt"
+    )
     data = DataSE(dname)
 
     si = load_material("silicon")
@@ -271,7 +273,9 @@ def test_refellips_against_wvase11():
     # polymer film in water with 70% solvent using the
     # Bruggeman EMA method with a depolarisation factor
     # of 0.2.
-    dname = pth / "WVASE_example_6nmSiO2_145nmPolymer_70EMA-BG_MultiWavelength.txt"
+    dname = (
+        pth / "WVASE_example_6nmSiO2_145nmPolymer_70EMA-BG_MultiWavelength.txt"
+    )
     data = DataSE(dname)
 
     si = load_material("silicon")
@@ -355,7 +359,9 @@ def test_sellmeier():
     s = air | film(750) | silicon()
     model = ReflectModelSE(s)
 
-    wavelength_aoi = np.c_[data.wavelength, np.full_like(data.wavelength, data.aoi)]
+    wavelength_aoi = np.c_[
+        data.wavelength, np.full_like(data.wavelength, data.aoi)
+    ]
     psi, delta = model.model(wavelength_aoi)
 
     assert_allclose(psi, data.psi, rtol=0.011)
@@ -384,7 +390,9 @@ def test_lorentz():
     s = air | film(1000) | silica(25) | silicon()
     model = ReflectModelSE(s)
 
-    wavelength_aoi = np.c_[data.wavelength, np.full_like(data.wavelength, data.aoi)]
+    wavelength_aoi = np.c_[
+        data.wavelength, np.full_like(data.wavelength, data.aoi)
+    ]
     psi, delta = model.model(wavelength_aoi)
 
     # these tolerances are much larger than we'd like
@@ -410,7 +418,9 @@ def test_gaussian():
     s = air | film(400) | silicon()
     model = ReflectModelSE(s)
 
-    wavelength_aoi = np.c_[data.wavelength, np.full_like(data.wavelength, data.aoi)]
+    wavelength_aoi = np.c_[
+        data.wavelength, np.full_like(data.wavelength, data.aoi)
+    ]
     psi, delta = model.model(wavelength_aoi)
 
     assert_allclose(psi, data.psi, rtol=0.03)
@@ -432,7 +442,9 @@ def test_gaussian_multi():
     s = air | film(2250) | silica(20) | silicon()
     model = ReflectModelSE(s)
 
-    wavelength_aoi = np.c_[data.wavelength, np.full_like(data.wavelength, data.aoi)]
+    wavelength_aoi = np.c_[
+        data.wavelength, np.full_like(data.wavelength, data.aoi)
+    ]
     psi, delta = model.model(wavelength_aoi)
 
     assert_allclose(psi, data.psi, rtol=0.027)
@@ -447,7 +459,8 @@ def test_TaucLorentz():
     Einf = 1
 
     data = DataSE(
-        pth / "WVASE_TaucLorentz_example_350nmFilm_MultiWavelength_MultiAngle.txt"
+        pth
+        / "WVASE_TaucLorentz_example_350nmFilm_MultiWavelength_MultiAngle.txt"
     )
 
     air = load_material("air")
@@ -457,7 +470,9 @@ def test_TaucLorentz():
     s = air | film(3500) | silica(30) | silicon()
     model = ReflectModelSE(s)
 
-    wavelength_aoi = np.c_[data.wavelength, np.full_like(data.wavelength, data.aoi)]
+    wavelength_aoi = np.c_[
+        data.wavelength, np.full_like(data.wavelength, data.aoi)
+    ]
     psi, delta = model.model(wavelength_aoi)
 
     assert_allclose(psi, data.psi, rtol=0.0176)
@@ -487,7 +502,9 @@ def test_residuals():
 
     psi_1, delta_1 = model_1(np.c_[wavelength, np.ones_like(wavelength) * aoi])
     psi_2, delta_2 = model_2(np.c_[wavelength, np.ones_like(wavelength) * aoi])
-    faux_data = DataSE([wavelength, np.ones_like(wavelength) * aoi, psi_1, delta_1])
+    faux_data = DataSE(
+        [wavelength, np.ones_like(wavelength) * aoi, psi_1, delta_1]
+    )
 
     obj = ObjectiveSE(model=model_2, data=faux_data)
     res = obj.residuals()
