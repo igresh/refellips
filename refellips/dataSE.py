@@ -572,9 +572,9 @@ def open_M2000file(fname, dropdatapoints=1):
     data = []
 
     with open(fname, mode="r") as file:
-        __ = file.readline()
+        file.readline()
         meas_info = file.readline()
-        __ = file.readline()
+        file.readline()
 
         count = 0
         while True:
@@ -769,7 +769,7 @@ def _open_FilmSenseFile_dynamic(f):
         base_df.iloc[i]["led_ExpL"] = float(line[2])
         base_df.iloc[i]["led_ExpR"] = float(line[3])
 
-    dataheader = f.readline().split("\t")
+    f.readline() # read header
 
     time_series = {}
     for i in range(metadata["numdatasets"]):
