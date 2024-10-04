@@ -610,7 +610,7 @@ def open_M2000file(fname, dropdatapoints=1):
 
     data = np.array(data)
     data = data[::dropdatapoints]
-    return DataSE(data[:, [0, 1, 2, 3]].T)
+    return DataSE(data[:, [0, 1, 2, 3]].T, header=meas_info)
 
 
 def open_woolam_time_series(fname, take_every=1):
@@ -737,7 +737,7 @@ def _open_FilmSenseFile_standard(f):
     AOI = np.ones_like(Psi) * metadata["nomAOI"]
     Wvl = np.array(df["Wavelength"]).astype(np.float64)
 
-    return DataSE(data=[Wvl, AOI, Psi, Delta], reflect_delta=False)
+    return DataSE(data=[Wvl, AOI, Psi, Delta], reflect_delta=False, **metadata)
 
 
 def _open_FilmSenseFile_dynamic(f):
@@ -800,7 +800,8 @@ def _open_FilmSenseFile_dynamic(f):
         Wvl = np.array(df["Wavelength"]).astype(np.float64)
 
         time_series[time] = DataSE(
-            data=[Wvl, AOI, Psi, Delta], reflect_delta=False
+            data=[Wvl, AOI, Psi, Delta], reflect_delta=False,
+            **metadata
         )
 
     return time_series
