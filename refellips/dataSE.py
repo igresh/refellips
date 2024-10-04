@@ -547,26 +547,24 @@ def open_HORIBAfile(
 
 def open_M2000file(fname, dropdatapoints=1):
     """
-    Open and load in an Accurion EP4 formmated data file.
-    Typically a .dat file.
-
-    Note: This file parser has been written for specific Accurion ellipsometers
-    EP3 and EP4. No work has been done to ensure it is compatible with all
-    Accurion ellipsometers. If you have trouble with this parser contact the
-    maintainers through github.
-
+    Opens raw text files exported by Woolam's 'CompleteEASE' software.
+    
+    
     Parameters
     ----------
     fname : file-handle or string
         File to load the dataset from.
 
-    reflect_delta : bool
-        Option to reflect delta around 180 degrees (as WVASE would).
-
+    take_every : int
+        Includes every nth element from the woolam dataset in DataSE.
+        Use to speed up fitting for datasets where a narrow wavelength
+        resolution is not required. 
+        
     Returns
     ----------
     datasets : DataSE structure
         Structure containing wavelength, angle of incidence, psi and delta.
+        Metadata contained within the file is stored in DataSE.metadata.
     """
 
     data = []
@@ -614,6 +612,7 @@ def open_M2000file(fname, dropdatapoints=1):
 
 
 def open_woolam_time_series(fname, take_every=1):
+
     df = pd.read_csv(
         fname,
         skiprows=4,
@@ -707,18 +706,18 @@ def _open_FilmSenseFile_standard(f):
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        df.iloc[i]["Wavelength"] = float(line[0])
-        df.iloc[i]["led_Br"] = float(line[1])
-        df.iloc[i]["led_ExpL"] = float(line[2])
-        df.iloc[i]["led_ExpR"] = float(line[3])
+        df.loc[i+1,"Wavelength"] = float(line[0])
+        df.loc[i+1,"led_Br"] = float(line[1])
+        df.loc[i+1,"led_ExpL"] = float(line[2])
+        df.loc[i+1,"led_ExpR"] = float(line[3])
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        df.iloc[i]["N"] = float(line[0])
-        df.iloc[i]["C"] = float(line[1])
-        df.iloc[i]["S"] = float(line[2])
-        df.iloc[i]["P"] = float(line[3])
-        df.iloc[i]["Intensity"] = float(line[4])
+        df.loc[i+1,"N"] = float(line[0])
+        df.loc[i+1,"C"] = float(line[1])
+        df.loc[i+1,"S"] = float(line[2])
+        df.loc[i+1,"P"] = float(line[3])
+        df.loc[i+1,"Intensity"] = float(line[4])
 
     S = np.array(df["S"], dtype=np.float32)
     N = np.array(df["N"], dtype=np.float32)
@@ -764,10 +763,10 @@ def _open_FilmSenseFile_dynamic(f):
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        base_df.iloc[i]["Wavelength"] = float(line[0])
-        base_df.iloc[i]["led_Br"] = float(line[1])
-        base_df.iloc[i]["led_ExpL"] = float(line[2])
-        base_df.iloc[i]["led_ExpR"] = float(line[3])
+        base_df.loc[i+1,"Wavelength"] = float(line[0])
+        base_df.loc[i+1,"led_Br"] = float(line[1])
+        base_df.loc[i+1,"led_ExpL"] = float(line[2])
+        base_df.loc[i+1,"led_ExpR"] = float(line[3])
 
     f.readline() # read header
 
@@ -780,11 +779,11 @@ def _open_FilmSenseFile_dynamic(f):
 
         for j in range(metadata["numwvls"]):
             J = j * 5
-            df.iloc[j]["N"] = float(line[J + 1])
-            df.iloc[j]["C"] = float(line[J + 2])
-            df.iloc[j]["S"] = float(line[J + 3])
-            df.iloc[j]["P"] = float(line[J + 4])
-            df.iloc[j]["Intensity"] = float(line[J + 5])
+            df.loc[j+1,"N"] = float(line[J + 1])
+            df.loc[j+1,"C"] = float(line[J + 2])
+            df.loc[j+1,"S"] = float(line[J + 3])
+            df.loc[j+1,"P"] = float(line[J + 4])
+            df.loc[j+1,"Intensity"] = float(line[J + 5])
 
         S = np.array(df["S"], dtype=np.float32)
         N = np.array(df["N"], dtype=np.float32)
