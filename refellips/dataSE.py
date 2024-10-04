@@ -707,18 +707,18 @@ def _open_FilmSenseFile_standard(f):
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        df.iloc[i]["Wavelength"] = float(line[0])
-        df.iloc[i]["led_Br"] = float(line[1])
-        df.iloc[i]["led_ExpL"] = float(line[2])
-        df.iloc[i]["led_ExpR"] = float(line[3])
+        df.loc[i,"Wavelength"] = float(line[0])
+        df.loc[i,"led_Br"] = float(line[1])
+        df.loc[i,"led_ExpL"] = float(line[2])
+        df.loc[i,"led_ExpR"] = float(line[3])
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        df.iloc[i]["N"] = float(line[0])
-        df.iloc[i]["C"] = float(line[1])
-        df.iloc[i]["S"] = float(line[2])
-        df.iloc[i]["P"] = float(line[3])
-        df.iloc[i]["Intensity"] = float(line[4])
+        df.loc[i,"N"] = float(line[0])
+        df.loc[i,"C"] = float(line[1])
+        df.loc[i,"S"] = float(line[2])
+        df.loc[i,"P"] = float(line[3])
+        df.loc[i,"Intensity"] = float(line[4])
 
     S = np.array(df["S"], dtype=np.float32)
     N = np.array(df["N"], dtype=np.float32)
@@ -764,10 +764,10 @@ def _open_FilmSenseFile_dynamic(f):
 
     for i in range(metadata["numwvls"]):
         line = f.readline().split("\t")
-        base_df.iloc[i]["Wavelength"] = float(line[0])
-        base_df.iloc[i]["led_Br"] = float(line[1])
-        base_df.iloc[i]["led_ExpL"] = float(line[2])
-        base_df.iloc[i]["led_ExpR"] = float(line[3])
+        base_df.loc[i,"Wavelength"] = float(line[0])
+        base_df.loc[i,"led_Br"] = float(line[1])
+        base_df.loc[i,"led_ExpL"] = float(line[2])
+        base_df.loc[i,"led_ExpR"] = float(line[3])
 
     dataheader = f.readline().split("\t")
 
@@ -780,11 +780,11 @@ def _open_FilmSenseFile_dynamic(f):
 
         for j in range(metadata["numwvls"]):
             J = j * 5
-            df.iloc[j]["N"] = float(line[J + 1])
-            df.iloc[j]["C"] = float(line[J + 2])
-            df.iloc[j]["S"] = float(line[J + 3])
-            df.iloc[j]["P"] = float(line[J + 4])
-            df.iloc[j]["Intensity"] = float(line[J + 5])
+            df.loc[j,"N"] = float(line[J + 1])
+            df.loc[j,"C"] = float(line[J + 2])
+            df.loc[j,"S"] = float(line[J + 3])
+            df.loc[j,"P"] = float(line[J + 4])
+            df.loc[j,"Intensity"] = float(line[J + 5])
 
         S = np.array(df["S"], dtype=np.float32)
         N = np.array(df["N"], dtype=np.float32)
