@@ -545,7 +545,7 @@ def open_HORIBAfile(
     return DataSE(data, name=name, reflect_delta=reflect_delta, **metadata)
 
 
-def open_M2000file(fname, dropdatapoints=1):
+def open_M2000file (fname, take_every=1, dropdatapoints=1):
     """
     Opens raw text files exported by Woolam's 'CompleteEASE' software.
     
@@ -555,35 +555,61 @@ def open_M2000file(fname, dropdatapoints=1):
     fname : file-handle or string
         File to load the dataset from.
 
-    take_every : int
+    dropdatapoints : int
         Includes every nth element from the woolam dataset in DataSE.
         Use to speed up fitting for datasets where a narrow wavelength
         resolution is not required. 
         
+    take_every : int
+        For time-resolved data sets only. Includes every nth dataset in
+        the returned dictionary. Usefully for reducing the number of data
+        points that needs to be processed when you don't need high temporaral
+        resolution
         
     Returns
     ----------
     datasets : DataSE structure or dict
         If the file contains a single measurment, function returns 
+        a single DataSE object containing wavelength, angle of 
+        incidence, psi and delta.
+        
         If the file contains multiple measurements, such as a time-
         series dataset, then it returns a dictionary containing
+        DataSE objects for each measurement point. The Dictionary
+        keys correspond to the measurement details (e.g., time in seconds).
+        
         Metadata contained within the file is stored in DataSE.metadata.
     """
 
-    data = []
+    mode = None
+    metadata = {}
 
     with open(fname, mode="r") as file:
-        file.readline() # read blank line
+        file.readline() # Skip the blank first line
+        firstline = file.readline()[:-1]
+        secondline = file.readline()[:-1]
+        
+        if secondline == 'nm':
+            mode = 'single'
+            skiplines = 3
+        elif secondline == 'Dynamic':
+            mode = 'dynamic'
+            skiplines = 4
+        else:
+            raise ValueError('Currently, only single and time-series datasets can be read')
 
-        # Parse header, convert to metadata dictionary:
-        header = file.readline()
-        header = header[len('VASEmethod['):-len(']\n')]
-        header_dict={}
-        for ele in header.split(', '):
-            key, val = ele.split('=')
-            header_dict[key]=val
- 
-        file.readline() # read blank line
+    header = firstline[len('VASEmethod['):-len(']')]
+    for ele in header.split(', '):
+        key, val = ele.split('=')
+        metadata[key]=val      
+
+    if mode == 'single':
+        return _open_M2000file_standard(fname=fname,
+                                 dropdatapoints=dropdatapoints,
+                                 skiplines=skiplines,
+                                 metadata=metadata)
+    elif mode == 'dynamic':
+        return _open_M2000file_kinetic(fname=fname,
                                 take_every=take_every,
                                 dropdatapoints=dropdatapoints,
                                 skiplines=skiplines,
@@ -591,6 +617,10 @@ def open_M2000file(fname, dropdatapoints=1):
 
 
 def _open_M2000file_standard(fname, dropdatapoints=1, metadata={}, skiplines=3):
+    data = []
+    with open(fname, mode="r") as file:
+        for i in range(skiplines):
+            file.readline()
 
         count = 0
         while True:
@@ -598,7 +628,6 @@ def _open_M2000file_standard(fname, dropdatapoints=1, metadata={}, skiplines=3):
 
             count += 1
 
-            # Get next line from file
             line = file.readline().split("\t")
             if not line:
                 break
@@ -625,9 +654,6 @@ def _open_M2000file_standard(fname, dropdatapoints=1, metadata={}, skiplines=3):
 
     data = np.array(data)
     data = data[::dropdatapoints]
-
-
-def open_woolam_time_series(fname, take_every=1):
     return DataSE(data[:, [0, 1, 2, 3]].T, **metadata)
 
 def _open_M2000file_kinetic(fname, take_every=1, dropdatapoints=1, skiplines=4, metadata={}):
