@@ -570,9 +570,17 @@ def open_M2000file(fname, dropdatapoints=1):
     data = []
 
     with open(fname, mode="r") as file:
-        file.readline()
-        meas_info = file.readline()
-        file.readline()
+        file.readline() # read blank line
+
+        # Parse header, convert to metadata dictionary:
+        header = file.readline()
+        header = header[len('VASEmethod['):-len(']\n')]
+        header_dict={}
+        for ele in header.split(', '):
+            key, val = ele.split('=')
+            header_dict[key]=val
+ 
+        file.readline() # read blank line
 
         count = 0
         while True:
@@ -608,7 +616,7 @@ def open_M2000file(fname, dropdatapoints=1):
 
     data = np.array(data)
     data = data[::dropdatapoints]
-    return DataSE(data[:, [0, 1, 2, 3]].T, header=meas_info)
+    return DataSE(data[:, [0, 1, 2, 3]].T, **header_dict)
 
 
 def open_woolam_time_series(fname, take_every=1):
