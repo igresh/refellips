@@ -32,7 +32,7 @@ def test_multiple_areas():
 
 
 def test_filmsense_loader():
-    ## STANDARD DATA TEST
+    # STANDARD DATA TEST
     std_fsdata = open_FilmSenseFile(pth / "Filmsense_staticTest.txt")
 
     std_bench = np.array(
@@ -54,7 +54,7 @@ def test_filmsense_loader():
     assert_allclose(std_bench[1], std_fsdata.psi, rtol=1e-3)
     assert_allclose(std_bench[2], std_fsdata.delta, rtol=1e-3)
 
-    ## DYNAMIC DATA TEST
+    # DYNAMIC DATA TEST
     dyn_fsdata = open_FilmSenseFile(pth / "Filmsense_kineticTest.txt")
 
     bench_times = [4.95, 14.86, 24.77, 34.66, 44.57, 54.48, 64.38]
@@ -86,7 +86,7 @@ def test_filmsense_loader():
 
 
 def test_M2000_loader():
-    ## STANDARD DATA TEST
+    # STANDARD DATA TEST
     std_wdata = open_M2000file(pth / "Woolam_staticTest.dat", dropdatapoints=40)
 
     std_bench = np.array(
@@ -111,7 +111,7 @@ def test_M2000_loader():
     assert_allclose(std_bench[2], std_wdata.psi, rtol=1e-3)
     assert_allclose(std_bench[3], std_wdata.delta, rtol=1e-3)
 
-    ## DYNAMIC DATA TEST
+    # DYNAMIC DATA TEST
     dyn_wdata = open_M2000file(
         pth / "Woolam_kineticTest.dat", take_every=2, dropdatapoints=40
     )
