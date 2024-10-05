@@ -3,7 +3,7 @@ import os.path
 from pathlib import Path
 from numpy.testing import assert_allclose
 
-from refellips.dataSE import DataSE, open_EP4file, open_FilmSenseFile
+from refellips.dataSE import DataSE, open_EP4file, open_FilmSenseFile, open_M2000file
 
 pth = Path(os.path.dirname(os.path.abspath(__file__)))
 
@@ -69,3 +69,25 @@ def test_filmsense_loader():
     assert_allclose(dyn_bench[0], sing_dyn_fsdata.wavelength, rtol=1e-3)
     assert_allclose(dyn_bench[1], sing_dyn_fsdata.psi, rtol=1e-3)
     assert_allclose(dyn_bench[2], sing_dyn_fsdata.delta, rtol=1e-3)
+    
+    
+def test_M2000_loader():  
+    std_wdata = open_M2000file(pth / 'Woolam_staticTest.dat', dropdatapoints=40)
+
+    std_bench = np.array([[370.324, 70, 21.4553, 145.7525],
+                          [434.059, 70,  8.6922, 157.8022],
+                          [497.825, 70,  4.7986, 152.0333],
+                          [561.586, 70,  2.8442, 141.3818],
+                          [625.304, 70,  1.7848, 123.4001],
+                          [688.942, 70,  1.2906,  97.0818],
+                          [752.463, 70,  1.2037,  69.1318],
+                          [815.829, 70,  1.3271,  49.0608],
+                          [879.003, 70,  1.5043,  36.8692],
+                          [941.948, 70,  1.6879,  28.9926]]).T
+
+    assert std_wdata.metadata['AcqTime'] == '30.013'
+
+    assert_allclose(std_bench[0], std_wdata.wavelength, rtol=1e-3)
+    assert_allclose(std_bench[1], std_wdata.aoi, rtol=1e-3)
+    assert_allclose(std_bench[2], std_wdata.psi, rtol=1e-3)
+    assert_allclose(std_bench[3], std_wdata.delta, rtol=1e-3)
