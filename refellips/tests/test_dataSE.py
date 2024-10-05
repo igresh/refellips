@@ -71,7 +71,8 @@ def test_filmsense_loader():
     assert_allclose(dyn_bench[2], sing_dyn_fsdata.delta, rtol=1e-3)
     
     
-def test_M2000_loader():  
+def test_M2000_loader(): 
+    ## STANDARD DATA TEST
     std_wdata = open_M2000file(pth / 'Woolam_staticTest.dat', dropdatapoints=40)
 
     std_bench = np.array([[370.324, 70, 21.4553, 145.7525],
@@ -91,3 +92,32 @@ def test_M2000_loader():
     assert_allclose(std_bench[1], std_wdata.aoi, rtol=1e-3)
     assert_allclose(std_bench[2], std_wdata.psi, rtol=1e-3)
     assert_allclose(std_bench[3], std_wdata.delta, rtol=1e-3)
+    
+    ## DYNAMIC DATA TEST
+    dyn_wdata = open_M2000file(pth / 'Woolam_kineticTest.dat',
+                            take_every=2,
+                            dropdatapoints=40)
+
+    bench_times = [1.4, 6.4, 11.5, 16.5]
+    times = list(dyn_wdata.keys())
+
+    assert_allclose(bench_times, times,   rtol=1e-3)
+
+    sing_dyn_wdata = dyn_wdata[times[2]]
+
+    dyn_bench  = np.array([[370.324, 70.0, 30.3104, 121.2913],
+                           [434.059, 70.0, 20.2057, 130.5181],
+                           [497.825, 70.0, 16.3773, 132.2358],
+                           [561.586, 70.0, 14.2143, 133.8754],
+                           [625.304, 70.0, 12.9270, 136.1897],
+                           [688.942, 70.0, 11.7856, 137.8630],
+                           [752.463, 70.0, 11.0232, 139.8401],
+                           [815.829, 70.0, 10.4095, 141.3768],
+                           [879.003, 70.0,  9.9504, 143.1087],
+                           [941.948, 70.0,  9.5185, 144.6035]]).T
+
+    assert sing_dyn_wdata.metadata['AcqTime'] == '0.978'
+    assert_allclose(dyn_bench[0], sing_dyn_wdata.wavelength, rtol=1)
+    assert_allclose(dyn_bench[1], sing_dyn_wdata.aoi, rtol=1e-3)
+    assert_allclose(dyn_bench[2], sing_dyn_wdata.psi, rtol=1e-3)
+    assert_allclose(dyn_bench[3], sing_dyn_wdata.delta, rtol=1e-3)
