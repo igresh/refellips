@@ -293,12 +293,12 @@ class Sellmeier(ScattererSE):
             wav = wavelength
 
         # Convert between μm & nm (constants are typically given in μm)
-        wav *= 1e-3
+        wav_um = wav * 1e-3
 
         real = np.sqrt(
             self.Einf.value
-            + (self.Am.value * wav**2) / (wav**2 - self.En.value**2)
-            - (self.P.value * wav**2)
+            + (self.Am.value * wav_um**2) / (wav_um**2 - self.En.value**2)
+            - (self.P.value * wav_um**2)
         )
         return real + 1j * 0.0
 
@@ -311,12 +311,12 @@ class Sellmeier(ScattererSE):
             wav = wavelength
 
         # Convert between μm & nm (constants are typically given in μm)
-        wav *= 1e-3
+        wav_um = wav * 1e-3
 
         real = (
             self.Einf.value
-            + (self.Am.value * wav**2) / (wav**2 - self.En.value**2)
-            - (self.P.value * wav**2)
+            + (self.Am.value * wav_um**2) / (wav_um**2 - self.En.value**2)
+            - (self.P.value * wav_um**2)
         )
 
         return real + 1j * 0
@@ -392,7 +392,7 @@ class Lorentz(ScattererSE):
         A = np.array(self.Am)[:, None]
         B = np.array(self.Br)[:, None]
         E = np.array(self.En)[:, None]
-        _e = np.asfarray(energy)
+        _e = np.asarray(energy, np.float64)
         v = A / (E**2 - _e**2 - 1j * B * _e)
         r = np.atleast_1d(np.sum(v, axis=0) + self.Einf.value)
 
@@ -458,7 +458,7 @@ class Gauss(ScattererSE):
         A = np.array(self.Am)[:, None]
         B = np.array(self.Br)[:, None]
         E = np.array(self.En)[:, None]
-        energies = np.asfarray(energy)
+        energies = np.asarray(energy, np.float64)
 
         # TODO cache if params don't change
         _e_pad = np.linspace(-20, 20, 2048)
@@ -555,7 +555,7 @@ class TaucLorentz(ScattererSE):
         C = np.array(self.C)[:, None]
         Ei = np.array(self.En)[:, None]
         Eg = self.Eg.value
-        energies = np.asfarray(energy)
+        energies = np.asarray(energy, np.float64)
 
         a_ln = (
             (Eg**2 - Ei**2) * energies**2
