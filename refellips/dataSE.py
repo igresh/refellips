@@ -438,15 +438,9 @@ def _loadEP4(df):
                     "lambda": np.array(grpby["#Lambda"].mean().values),
                     "aoi": np.array(grpby["AOI"].mean().values),
                     "psi": np.array(grpby["Psi"].mean().values),
-                    "delta": np.array(
-                        grpby["Delta"].agg(circular_mean).values
-                    ),
-                    "X pos": np.round(
-                        np.mean(grpby["X_pos"].mean().values), 2
-                    ),
-                    "Y pos": np.round(
-                        np.mean(grpby["Y_pos"].mean().values), 2
-                    ),
+                    "delta": np.array(grpby["Delta"].agg(circular_mean).values),
+                    "X pos": np.round(np.mean(grpby["X_pos"].mean().values), 2),
+                    "Y pos": np.round(np.mean(grpby["Y_pos"].mean().values), 2),
                 }
                 output.append(summary)
     else:
@@ -522,9 +516,7 @@ def open_HORIBAfile(
                         metadata[MDlabel]
                     ):  # there is no metadata for entry
                         metadata[MDlabel] = None  # Set metadata to none
-                    elif (
-                        len(metadata[MDlabel]) == 1
-                    ):  # there is only one entry
+                    elif len(metadata[MDlabel]) == 1:  # there is only one entry
                         metadata[MDlabel] = metadata[MDlabel][
                             0
                         ]  # remove data from list
@@ -630,9 +622,7 @@ def open_M2000file(fname, take_every=1, dropdatapoints=1):
         )
 
 
-def _open_M2000file_standard(
-    fname, dropdatapoints=1, metadata={}, skiplines=3
-):
+def _open_M2000file_standard(fname, dropdatapoints=1, metadata={}, skiplines=3):
     data = []
     with possibly_open_file(fname, mode="r") as file:
         for i in range(skiplines):

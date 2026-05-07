@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def circular_mean(angles):
     """
     Calculates the circular (directional) mean of an array of angles.
