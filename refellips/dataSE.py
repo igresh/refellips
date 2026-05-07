@@ -10,6 +10,7 @@ import pandas as pd
 from refnx._lib import possibly_open_file
 from pathlib import PurePath
 
+from .utils import circular_mean
 pd.options.mode.chained_assignment = None
 
 
@@ -430,33 +431,32 @@ def _loadEP4(df):
             ]
 
             if len(pdf.index) > 0:
-                ave_pos = pdf.groupby(["AOI", "#Lambda"]).mean()
-                ave_pos = ave_pos.reset_index()
+                grpby = pdf.groupby(["AOI", "#Lambda"])
 
                 summary = {
-                    "lambda": np.array(ave_pos["#Lambda"]),
-                    "aoi": np.array(ave_pos["AOI"]),
-                    "psi": np.array(ave_pos["Psi"]),
-                    "delta": np.array(ave_pos["Delta"]),
-                    "X pos": np.round(np.mean(ave_pos["X_pos"]), 2),
-                    "Y pos": np.round(np.mean(ave_pos["Y_pos"]), 2),
+                    "lambda": np.array(grpby["#Lambda"].mean()),
+                    "aoi": np.array(grpby["AOI"].mean()),
+                    "psi": np.array(grpby["Psi"].mean()),
+                    "delta": np.array(grpby["Delta"].agg(circular_mean)),
+                    "X pos": np.round(grpby["X_pos"].mean(), 2),
+                    "Y pos": np.round(grpby["Y_pos"].mean(), 2),
                 }
                 output.append(summary)
     else:
         print("Treating as single location")
         df = df[["#Lambda", "AOI", "Psi", "Delta"]]
-        ave_pos = df.groupby(["AOI", "#Lambda"]).mean()
-        ave_pos = ave_pos.reset_index()
+        grpby = df.groupby(["AOI", "#Lambda"])
 
         summary = {
-            "lambda": np.array(ave_pos["#Lambda"]),
-            "aoi": np.array(ave_pos["AOI"]),
-            "psi": np.array(ave_pos["Psi"]),
-            "delta": np.array(ave_pos["Delta"]),
+            "lambda": np.array(grpby["#Lambda"].mean()),
+            "aoi": np.array(grpby["AOI"].mean()),
+            "psi": np.array(grpby["Psi"].mean()),
+            "delta": np.array(grpby["Delta"].agg(circular_mean)),
             "X pos": None,
             "Y pos": None,
         }
         output = [summary]
+
 
     return output
 
