@@ -434,12 +434,12 @@ def _loadEP4(df):
                 grpby = pdf.groupby(["AOI", "#Lambda"])
 
                 summary = {
-                    "lambda": np.array(grpby["#Lambda"].mean()),
-                    "aoi": np.array(grpby["AOI"].mean()),
-                    "psi": np.array(grpby["Psi"].mean()),
-                    "delta": np.array(grpby["Delta"].agg(circular_mean)),
-                    "X pos": np.round(grpby["X_pos"].mean(), 2),
-                    "Y pos": np.round(grpby["Y_pos"].mean(), 2),
+                    "lambda": np.array(grpby["#Lambda"].mean().values),
+                    "aoi": np.array(grpby["AOI"].mean().values),
+                    "psi": np.array(grpby["Psi"].mean().values),
+                    "delta": np.array(grpby["Delta"].agg(circular_mean).values),
+                    "X pos": np.round(np.mean(grpby["X_pos"].mean().values), 2),
+                    "Y pos": np.round(np.mean(grpby["Y_pos"].mean().values), 2),
                 }
                 output.append(summary)
     else:
@@ -448,10 +448,10 @@ def _loadEP4(df):
         grpby = df.groupby(["AOI", "#Lambda"])
 
         summary = {
-            "lambda": np.array(grpby["#Lambda"].mean()),
-            "aoi": np.array(grpby["AOI"].mean()),
-            "psi": np.array(grpby["Psi"].mean()),
-            "delta": np.array(grpby["Delta"].agg(circular_mean)),
+            "lambda": np.array(grpby["#Lambda"].mean().values),
+            "aoi": np.array(grpby["AOI"].mean().values),
+            "psi": np.array(grpby["Psi"].mean().values),
+            "delta": np.array(grpby["Delta"].agg(circular_mean).values),
             "X pos": None,
             "Y pos": None,
         }
