@@ -13,3 +13,4 @@ build/
 refellips.egg-info/
 refellips/version.py
 dist/
+demos/EllipsOutput.pkl
